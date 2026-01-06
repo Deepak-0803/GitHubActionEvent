@@ -1,22 +1,33 @@
-name: Events Demo 1
-on:
-  pull_request:
-    types:
-      - opened
-  workflow_dispatch:
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Output event data
-        run: echo "${{ toJSON(github.event) }}"
-      - name: Get code
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: npm ci
-      - name: Test code
-        run: npm run test
-      - name: Build code
-        run: npm run build
-      - name: Deploy project
-        run: echo "Deploying..."
+#name: Events Demo 1
+#on:
+#  pull_request:
+#    types:
+#      - opened
+#    branches:
+#      - main # it  takes only the main branch
+#      - 'dev-*' # it will t run of the branch start with dev only dev-new, dev-this,
+#      - 'feat/**' #what evert start with feat it will run
+#  workflow_dispatch:
+#  push:
+#    branches:
+#      - main # it  takes only the main branch
+#      - 'dev-*' # it will t run of the branch start with dev only dev-new, dev-this,
+#      - 'feat/**' #what evert start with feat it will run
+#    paths-ignore:
+#      - '.github/workflows/*'
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Output event data
+#        run: echo "${{ toJSON(github.event) }}"
+#      - name: Get code
+#        uses: actions/checkout@v3
+#      - name: Install dependencies
+#        run: npm ci
+#      - name: Test code
+#        run: npm run test
+#      - name: Build code
+#        run: npm run build
+#      - name: Deploy project
+#        run: echo "Deploying..."
