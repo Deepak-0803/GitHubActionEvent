@@ -18,6 +18,9 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+#Here, the build job defines its job-level output using the step’s output (publish)
+    #
+    #So needs.build.outputs.script-file in the deploy job can access it
     outputs:
       script-file: ${{steps.publish.outputs.script-file }}
     steps:
@@ -29,6 +32,13 @@ jobs:
         run: npm run build
       - name: Publish js filename
         id: publish
+#Finds all JS files in dist/assets/
+        #
+        #For each file, it writes an output variable called script-file to GitHub’s environment output file ($GITHUB_OUTPUT)
+        #
+        #This sets the output for the step with id: publish
+        #
+        #Example: If dist/assets/ has main.js and vendor.js, the loop runs twice, but only the last file will be stored in step output because script-file is overwritten in each iteration.
         run: |
               for file in dist/assets/*.js; do
                 echo "script-file=$file" >> $GITHUB_OUTPUT
@@ -50,7 +60,32 @@ jobs:
           name: dist-files
       - name: dist-file-read
         run: ls
+#Prints the file name set by the publish step
+      #
+      #Only prints the last JS file found because the loop overwrote script-file each time
       - name: Output  file name from top
         run: echo "${{ needs.build.outputs.script-file }}"
       - name: Deploy
         run: echo "Deploying..."
+
+#4. How it worked
+#
+#Build job runs → JS files are listed in dist/assets
+#
+#Loop sets step output using $GITHUB_OUTPUT
+#
+#Build job exposes step output as job output
+#
+#Deploy job accesses it using needs.build.outputs → prints the last file name
+
+#Short Summary
+#
+#The workflow finds JS files in dist/assets
+#
+#Sets the last file found as a step output (publish)
+#
+#Exposes it as job output (build)
+#
+#The deploy job prints it using needs.build.outputs.script-file
+#
+#Output = last JS file in folder unless you join multiple files.
