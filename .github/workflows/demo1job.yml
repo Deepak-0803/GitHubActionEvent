@@ -10,10 +10,14 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
       - name: Cache dependencies
+#This step caches npm dependencies
+        #~/.npm folder is stored
+        #Cache key depends on package-lock.json
+        #Speeds up workflow execution
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: deps-node-modules-{{ hashFiles('**/package-lock.jason') }}
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         run: npm ci
       - name: Lint code
@@ -24,7 +28,6 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
 #Here, the build job defines its job-level output using the step’s output (publish)
-    #
     #So needs.build.outputs.script-file in the deploy job can access it
     outputs:
       script-file: ${{steps.publish.outputs.script-file }}
@@ -32,22 +35,15 @@ jobs:
       - name: Get code
         uses: actions/checkout@v3
 #uses: actions/cache@v4
-      #
       #This is a GitHub Action that caches files or folders between workflow runs.
-      #
       #It speeds up builds by reusing previously downloaded dependencies instead of installing them again.
 #path: ~/.npm
-      #
       #Specifies what to cache.
-      #
       #~/.npm → the folder where npm stores downloaded packages.
 #key: deps-node-modules-{{ hashFiles('**/package-lock.jason') }}
-      #
       #key is how GitHub identifies your cache.
-      #
       #It combines a prefix (deps-node-modules-) + hash of a file:
 #Short Summary
-      #
       #actions/cache → saves files/folders between runs
       #
       #path → folder to cache (~/.npm)
@@ -59,7 +55,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: deps-node-modules-{{ hashFiles('**/package-lock.jason') }}
+          key: deps-node-modules-${{ hashFiles('**/package-lock.jason') }}
       - name: Install dependencies
         run: npm ci
       - name: Build website
@@ -67,11 +63,8 @@ jobs:
       - name: Publish js filename
         id: publish
 #Finds all JS files in dist/assets/
-        #
         #For each file, it writes an output variable called script-file to GitHub’s environment output file ($GITHUB_OUTPUT)
-        #
         #This sets the output for the step with id: publish
-        #
         #Example: If dist/assets/ has main.js and vendor.js, the loop runs twice, but only the last file will be stored in step output because script-file is overwritten in each iteration.
         run: |
               for file in dist/assets/*.js; do
