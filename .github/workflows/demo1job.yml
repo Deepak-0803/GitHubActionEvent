@@ -31,6 +31,30 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v3
+#uses: actions/cache@v4
+      #
+      #This is a GitHub Action that caches files or folders between workflow runs.
+      #
+      #It speeds up builds by reusing previously downloaded dependencies instead of installing them again.
+#path: ~/.npm
+      #
+      #Specifies what to cache.
+      #
+      #~/.npm → the folder where npm stores downloaded packages.
+#key: deps-node-modules-{{ hashFiles('**/package-lock.jason') }}
+      #
+      #key is how GitHub identifies your cache.
+      #
+      #It combines a prefix (deps-node-modules-) + hash of a file:
+#Short Summary
+      #
+      #actions/cache → saves files/folders between runs
+      #
+      #path → folder to cache (~/.npm)
+      #
+      #key → unique identifier, usually includes hash of lock file
+      #
+      #Speeds up builds and avoids reinstalling dependencies
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
